@@ -20,5 +20,3 @@ export function NavLink({ exact, ...props }: Props) {
     />
   );
 }
-
-

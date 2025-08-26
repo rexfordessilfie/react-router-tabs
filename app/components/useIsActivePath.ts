@@ -10,7 +10,7 @@ export function useIsActivePath() {
   const isActivePath = useCallback(
     (path: string, exact?: boolean) =>
       checkMatchingPath(path, location.pathname, exact ? path : ""),
-    [location.pathname]
+    [location.pathname],
   );
 
   return isActivePath;

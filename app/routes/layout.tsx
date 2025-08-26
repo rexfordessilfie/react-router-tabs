@@ -1,32 +1,26 @@
-import {  Outlet } from "react-router";
+import { Outlet } from "react-router";
 import { CountersProvider, Counter2, NavLink } from "~/components";
-
-
-
-
 
 export default function Layout() {
   return (
     <CountersProvider>
-
-      
-    <div
-      className={`antialiased flex flex-col flex-1 items-center p-4 dark:text-gray-300`}
-    >
-      <div className="w-full max-w-screen-sm flex-col flex">
-        <div className="flex-col flex gap-2 min-h-72">
-          <div className="w-fit gap-4 text-center flex mx-auto py-2">
+      <div
+        className={`antialiased flex flex-col flex-1 items-center p-4 dark:text-gray-300`}
+      >
+        <div className="w-full max-w-screen-sm flex-col flex">
+          <div className="flex-col flex gap-2 min-h-72">
+            <div className="w-fit gap-4 text-center flex mx-auto py-2">
               <NavLink to="/">Home</NavLink>
               <NavLink to="/tab-a">Tab A</NavLink>
               <NavLink to="/tab-b">Tab B</NavLink>
-              <NavLink to="/tab-c">Tab C (children)</NavLink>
+              <NavLink to="/tab-c">Tab C</NavLink>
             </div>
 
             <div
               key={1}
               className="p-2 border dark:border-gray-500 rounded-md flex flex-col gap-2"
             >
-              <Counter2 id='layout' label="Layout" />
+              <Counter2 id="layout" label="Layout" />
               <Outlet />
             </div>
           </div>
@@ -43,18 +37,18 @@ export default function Layout() {
             <p className="font-semibold">Description</p>
             <ul className="list-disc list-inside [&>li]:mb-2 mt-3 ml-2">
               <li>
-                In Next.js, layouts automatically persist state across route
-                changes.
+                In React Router, layouts automatically persist state across
+                route changes.
               </li>
 
               <li>
-                However, the client state for pages are reset on each
+                However, the local client state for pages are reset on each
                 navigation.
               </li>
 
               <li>
                 This demo showcases how to maintain state across different
-                routes using parallel routes.
+                routes using React Context.
               </li>
             </ul>
 
@@ -77,13 +71,6 @@ export default function Layout() {
                 forward buttons
               </li>
             </ol>
-
-            <p>
-              You will notice that Home and Tab C reset each other as you click
-              back and forth between them. This is because they share the same
-              slot, <code>children</code>.<br></br>To truly have full tab-like
-              behavior, each tab should have its own unique slot.
-            </p>
           </div>
           <div className="w-full text-center mt-8">
             <a href="https://github.com/rexfordessilfie/react-router-tabs">

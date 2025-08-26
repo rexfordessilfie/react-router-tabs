@@ -1,81 +1,99 @@
 import React, { useCallback } from "react";
 
 type CountersContextType = {
-    counters: Record<string, number>;
-    start: (id: string) => void;
-    stop: (id: string) => void;
-    getValue: (id: string) => number;
+  counters: Record<string, number>;
+  start: (id: string) => void;
+  stop: (id: string) => void;
+  getValue: (id: string) => number;
 };
 
 const CountersContext = React.createContext<CountersContextType>({
+  counters: {},
+  start: () => {},
+  stop: () => {},
+  getValue: () => 0,
+});
+
+export const CountersProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [counters, setCounters] = React.useState<CountersContextType>({
     counters: {},
     start: () => {},
     stop: () => {},
     getValue: () => 0,
-});
+  });
 
-export const CountersProvider = ({ children }: { children: React.ReactNode }) => {
-    const [counters, setCounters] = React.useState<CountersContextType>({
-        counters: {},
-        start: () => {},
-        stop: () => {},
-        getValue: () => 0,
-    });
+  const intervalIdRefs = React.useRef<
+    Record<string, NodeJS.Timeout | undefined>
+  >({});
 
-    const intervalIdRefs = React.useRef<Record<string, NodeJS.Timeout | undefined>>({});
+  const start = useCallback(
+    (id: string) => {
+      if (intervalIdRefs.current[id]) return;
 
-   const start = useCallback((id: string) => {
-     if (intervalIdRefs.current[id]) return;
-     
-     setCounters((prev) => ({ ...prev, counters: { ...prev.counters, [id]: 0 } }));
+      setCounters((prev) => ({
+        ...prev,
+        counters: { ...prev.counters, [id]: 0 },
+      }));
 
-     const interval = setInterval(() => {
-      setCounters((prev) => ({ ...prev, counters: { ...prev.counters, [id]: prev.counters[id] + 1 } }));
-     }, 1000);
+      const interval = setInterval(() => {
+        setCounters((prev) => ({
+          ...prev,
+          counters: { ...prev.counters, [id]: prev.counters[id] + 1 },
+        }));
+      }, 1000);
 
-     intervalIdRefs.current[id] = interval;
-    
-   }, [counters]);
+      intervalIdRefs.current[id] = interval;
+    },
+    [counters],
+  );
 
-   const stop = useCallback((id: string) => {
+  const stop = useCallback((id: string) => {
     clearInterval(intervalIdRefs.current[id]!);
     intervalIdRefs.current[id] = undefined;
-   }, []);  
+  }, []);
 
-   const getValue = useCallback((id: string) => {
-    return counters.counters[id];
-   }, [counters]);
+  const getValue = useCallback(
+    (id: string) => {
+      return counters.counters[id];
+    },
+    [counters],
+  );
 
-    return (
-        <CountersContext.Provider value={{ counters: counters.counters, start, stop, getValue }}>
-            {children}
-        </CountersContext.Provider>
-    );
+  return (
+    <CountersContext.Provider
+      value={{ counters: counters.counters, start, stop, getValue }}
+    >
+      {children}
+    </CountersContext.Provider>
+  );
 };
 
 export const useCounters = () => React.useContext(CountersContext);
 
 export const useCounter = (id: string) => {
-    const { getValue, start: startCounter, stop: stopCounter } = useCounters();
+  const { getValue, start: startCounter, stop: stopCounter } = useCounters();
 
-    React.useEffect(() => {
-        startCounter(id);
-    }, [id]);
-    
-    const start = useCallback(() => startCounter(id), [id]);
-    const stop = useCallback(() => stopCounter(id), [id]);
+  React.useEffect(() => {
+    startCounter(id);
+  }, [id]);
 
-    const value = getValue(id);
+  const start = useCallback(() => startCounter(id), [id]);
+  const stop = useCallback(() => stopCounter(id), [id]);
 
+  const value = getValue(id);
 
-    return {
-        value,
-        start,
-        stop,
-    };
-}
+  return {
+    value,
+    start,
+    stop,
+  };
+};
 
-export function Counter2({ label, id }: { label?: string, id: string }) {
+export function Counter2({ label, id }: { label?: string; id: string }) {
   const { value, start, stop } = useCounter(id);
 
   return (
